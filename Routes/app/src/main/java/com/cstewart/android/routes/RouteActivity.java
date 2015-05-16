@@ -1,15 +1,11 @@
 package com.cstewart.android.routes;
 
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
 
-
-public class RouteActivity extends ActionBarActivity {
+public class RouteActivity extends RouteSingleFragmentActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_route);
+    protected Fragment createFragment() {
+        return RouteMapFragment.newInstance();
     }
-
 }
