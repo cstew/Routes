@@ -13,9 +13,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 public class RouteMapFragment extends SupportMapFragment {
+
+    private static final int DEFAULT_ZOOM_LEVEL = 16;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -63,12 +64,7 @@ public class RouteMapFragment extends SupportMapFragment {
         }
 
         LatLng currentLatLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-
-        LatLngBounds currentBounds = new LatLngBounds.Builder()
-                .include(currentLatLng)
-                .build();
-        int margin = getResources().getDimensionPixelSize(R.dimen.map_margin);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(currentBounds, margin);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM_LEVEL);
         mMap.animateCamera(cameraUpdate);
     }
 
