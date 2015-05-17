@@ -13,6 +13,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RouteMapFragment extends SupportMapFragment {
 
@@ -21,6 +26,8 @@ public class RouteMapFragment extends SupportMapFragment {
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+
+    private List<LatLng> mMapPoints = new ArrayList<>();
 
     public static RouteMapFragment newInstance() {
         return new RouteMapFragment();
@@ -92,10 +99,28 @@ public class RouteMapFragment extends SupportMapFragment {
         @Override
         public void onMapReady(GoogleMap map) {
             mMap = map;
+            mMap.setOnMapLongClickListener(mOnMapLongClickListener);
             map.setMyLocationEnabled(true);
             map.setBuildingsEnabled(true);
 
             zoomToLocation();
+        }
+    };
+
+    private GoogleMap.OnMapLongClickListener mOnMapLongClickListener = new GoogleMap.OnMapLongClickListener() {
+        @Override
+        public void onMapLongClick(LatLng latLng) {
+            mMapPoints.add(latLng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .draggable(true)
+                    .flat(true));
+
+            if (mMapPoints.size() > 1) {
+                LatLng lastPoint = mMapPoints.get(mMapPoints.size() - 2);
+                mMap.addPolyline(new PolylineOptions()
+                        .add(lastPoint, latLng));
+            }
         }
     };
 }
