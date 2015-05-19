@@ -1,9 +1,11 @@
-package com.cstewart.android.routes;
+package com.cstewart.android.routes.controller;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+
+import com.cstewart.android.routes.R;
 
 public abstract class RouteSingleFragmentActivity extends AppCompatActivity {
 

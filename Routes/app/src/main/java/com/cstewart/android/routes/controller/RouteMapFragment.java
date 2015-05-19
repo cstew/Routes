@@ -1,8 +1,11 @@
-package com.cstewart.android.routes;
+package com.cstewart.android.routes.controller;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.cstewart.android.routes.RouteApplication;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -19,9 +22,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class RouteMapFragment extends SupportMapFragment {
 
     private static final int DEFAULT_ZOOM_LEVEL = 16;
+
+    @Inject Context mAppContext;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -36,6 +43,9 @@ public class RouteMapFragment extends SupportMapFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        RouteApplication.get(getActivity()).getRouteGraph().inject(this);
+        Toast.makeText(getActivity(), "Got context: " + mAppContext, Toast.LENGTH_SHORT).show();
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)

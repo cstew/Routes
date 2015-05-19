@@ -1,4 +1,4 @@
-package com.cstewart.android.routes;
+package com.cstewart.android.routes.controller;
 
 import android.support.v4.app.Fragment;
 

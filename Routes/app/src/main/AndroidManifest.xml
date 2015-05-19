@@ -13,14 +13,15 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/RoutesTheme">
+        android:theme="@style/RoutesTheme"
+        android:name=".RouteApplication">
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/maps_api_key"/>
 
         <activity
-            android:name=".RouteActivity"
+            android:name=".controller.RouteActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
