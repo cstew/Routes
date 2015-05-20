@@ -90,7 +90,6 @@ public class RouteMapFragment extends SupportMapFragment {
     }
 
     private void drawPoints(List<LatLng> latLngList) {
-        mMap.clear();
         mMap.addPolyline(new PolylineOptions()
                 .addAll(latLngList));
     }
@@ -137,10 +136,6 @@ public class RouteMapFragment extends SupportMapFragment {
                     .flat(true));
 
             if (mMapPoints.size() > 1) {
-                LatLng lastPoint = mMapPoints.get(mMapPoints.size() - 2);
-                mMap.addPolyline(new PolylineOptions()
-                        .add(lastPoint, latLng));
-
                 mDirectionsManager.getDirections(mMapPoints, new Callback<List<LatLng>>() {
                     @Override
                     public void success(List<LatLng> latLngList, Response response) {
