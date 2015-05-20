@@ -6,3 +6,8 @@ Plan your exercise route
 ```
 ROUTES_MAPS_API_KEY = YOUR_API_KEY
 ```
+
+2. Set up your Google Directions API key in `~/.gradle/gradle.properties`:
+```
+ROUTES_DIRECTIONS_API_KEY = YOUR_API_KEY
+```
