@@ -2,6 +2,7 @@ package com.cstewart.android.routes;
 
 import android.content.Context;
 
+import com.cstewart.android.routes.data.DirectionsManager;
 import com.cstewart.android.routes.data.DirectionsService;
 
 import dagger.Module;
@@ -18,13 +19,18 @@ public class RouteModule {
         mContext = context;
     }
 
+    @Provides DirectionsManager provideDirectionsManager(DirectionsService directionsService) {
+        return new DirectionsManager(directionsService);
+    }
+
     @Provides DirectionsService provideDirectionsService(RestAdapter restAdapter) {
         return restAdapter.create(DirectionsService.class);
     }
 
     @Provides RestAdapter provideRestAdapter() {
         return new RestAdapter.Builder()
-                .setEndpoint("http://maps.googleapis.com/maps/api")
+                .setEndpoint("https://maps.googleapis.com/maps/api")
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setRequestInterceptor(new RequestInterceptor() {
                     @Override
                     public void intercept(RequestFacade request) {

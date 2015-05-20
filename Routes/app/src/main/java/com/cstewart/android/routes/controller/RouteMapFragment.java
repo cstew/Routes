@@ -3,11 +3,9 @@ package com.cstewart.android.routes.controller;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.cstewart.android.routes.RouteApplication;
-import com.cstewart.android.routes.data.DirectionsService;
-import com.cstewart.android.routes.data.model.RouteContainer;
+import com.cstewart.android.routes.data.DirectionsManager;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -35,7 +33,7 @@ public class RouteMapFragment extends SupportMapFragment {
 
     private static final int DEFAULT_ZOOM_LEVEL = 16;
 
-    @Inject DirectionsService mDirectionsService;
+    @Inject DirectionsManager mDirectionsManager;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -52,18 +50,6 @@ public class RouteMapFragment extends SupportMapFragment {
         super.onCreate(savedInstanceState);
 
         RouteApplication.get(getActivity()).getRouteGraph().inject(this);
-
-        mDirectionsService.getDirections("Atlanta", "San Francisco", new Callback<RouteContainer>() {
-            @Override
-            public void success(RouteContainer routeContainer, Response response) {
-                Toast.makeText(getActivity(), "Got directions!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.e(TAG, "Unable to get directions", error);
-            }
-        });
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
@@ -101,6 +87,12 @@ public class RouteMapFragment extends SupportMapFragment {
         LatLng currentLatLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM_LEVEL);
         mMap.animateCamera(cameraUpdate);
+    }
+
+    private void drawPoints(List<LatLng> latLngList) {
+        mMap.clear();
+        mMap.addPolyline(new PolylineOptions()
+                .addAll(latLngList));
     }
 
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
@@ -148,7 +140,21 @@ public class RouteMapFragment extends SupportMapFragment {
                 LatLng lastPoint = mMapPoints.get(mMapPoints.size() - 2);
                 mMap.addPolyline(new PolylineOptions()
                         .add(lastPoint, latLng));
+
+                mDirectionsManager.getDirections(mMapPoints, new Callback<List<LatLng>>() {
+                    @Override
+                    public void success(List<LatLng> latLngList, Response response) {
+                        drawPoints(latLngList);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e(TAG, "Unable to get directions", error);
+                    }
+                });
             }
         }
     };
+
+
 }

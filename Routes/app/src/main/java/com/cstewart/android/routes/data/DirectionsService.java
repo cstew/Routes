@@ -9,6 +9,9 @@ import retrofit.http.Query;
 public interface DirectionsService {
 
     @GET("/directions/json")
-    public void getDirections(@Query("origin") String origin, @Query("destination") String destination, Callback<RouteContainer> callback);
+    public void getDirections(@Query("origin") String origin,
+                              @Query("destination") String destination,
+                              @Query("mode") String mode,
+                              Callback<RouteContainer> callback);
 
 }
