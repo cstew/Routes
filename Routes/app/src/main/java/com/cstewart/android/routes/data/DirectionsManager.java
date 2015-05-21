@@ -22,7 +22,20 @@ public class DirectionsManager {
     }
 
     public void getDirections(List<LatLng> points, final Callback<List<LatLng>> callback) {
-        mDirectionsService.getDirections(getConvertedLatLng(points.get(0)), getConvertedLatLng(points.get(1)), MODE_WALKING, new Callback<RouteContainer>() {
+
+        int lastPosition = points.size() - 1;
+        String origin = getConvertedLatLng(points.get(0));
+        String destination = getConvertedLatLng(points.get(lastPosition));
+        String waypoints = null;
+        if (points.size() > 2) {
+            waypoints = getConvertedWaypoints(points.subList(1, lastPosition));
+        }
+
+        mDirectionsService.getDirections(origin,
+                destination,
+                waypoints,
+                MODE_WALKING,
+                new Callback<RouteContainer>() {
             @Override
             public void success(RouteContainer routeContainer, Response response) {
                 if (!routeContainer.isValid()) {
@@ -46,6 +59,20 @@ public class DirectionsManager {
 
     private static String getConvertedLatLng(LatLng latLng) {
         return latLng.latitude + ", " + latLng.longitude;
+    }
+
+    private String getConvertedWaypoints(List<LatLng> points) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (LatLng latLng : points) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append("|");
+            }
+            stringBuilder.append("via:");
+            stringBuilder.append(getConvertedLatLng(latLng));
+        }
+
+        return stringBuilder.toString();
     }
 
 }

@@ -11,6 +11,7 @@ public interface DirectionsService {
     @GET("/directions/json")
     public void getDirections(@Query("origin") String origin,
                               @Query("destination") String destination,
+                              @Query("waypoints") String waypoints,
                               @Query("mode") String mode,
                               Callback<RouteContainer> callback);
 
