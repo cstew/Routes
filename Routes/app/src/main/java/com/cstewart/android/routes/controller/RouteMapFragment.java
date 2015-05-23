@@ -81,12 +81,21 @@ public class RouteMapFragment extends SupportMapFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_map, menu);
+
+        if (mMapPoints.size() <= 0) {
+            menu.removeItem(R.id.fragment_map_undo);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+
+            case R.id.fragment_map_undo:
+                undoPoint();
+                getActivity().invalidateOptionsMenu();
+                return true;
 
             case R.id.fragment_map_clear:
                 clearMap();
@@ -122,6 +131,44 @@ public class RouteMapFragment extends SupportMapFragment {
     private void clearMap() {
         mMapPoints.clear();
         mMap.clear();
+    }
+
+    private void undoPoint() {
+        if (mMapPoints.isEmpty()) {
+            return;
+        }
+
+        mMap.clear();
+        mMapPoints.remove(mMapPoints.size() - 1);
+        drawAllPoints();
+        requestRoute();
+    }
+
+    private void drawAllPoints() {
+        for (LatLng latLng : mMapPoints) {
+            drawPoint(latLng);
+        }
+    }
+
+    private void drawPoint(LatLng latLng) {
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .draggable(true)
+                .flat(true));
+    }
+
+    private void requestRoute() {
+        if (mMapPoints.size() <= 1) {
+            return;
+        }
+        AppObservable.bindFragment(RouteMapFragment.this, mDirectionsManager.getDirections(mMapPoints))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(latLngs -> drawPoints(latLngs),
+                        throwable -> {
+                            Log.e(TAG, "Unable to get directions", throwable);
+                            Toast.makeText(getActivity(), "Unable to get directions.", Toast.LENGTH_SHORT).show();
+                        });
     }
 
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
@@ -160,24 +207,11 @@ public class RouteMapFragment extends SupportMapFragment {
         @Override
         public void onMapLongClick(LatLng latLng) {
             mMapPoints.add(latLng);
-            mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .draggable(true)
-                    .flat(true));
+            drawPoint(latLng);
 
-            if (mMapPoints.size() <= 1) {
-                return;
-            }
-            AppObservable.bindFragment(RouteMapFragment.this, mDirectionsManager.getDirections(mMapPoints))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(latLngs -> drawPoints(latLngs),
-                            throwable -> {
-                                Log.e(TAG, "Unable to get directions", throwable);
-                                Toast.makeText(getActivity(), "Unable to get directions.", Toast.LENGTH_SHORT).show();
-                            });
+            requestRoute();
+            getActivity().invalidateOptionsMenu();
         }
     };
-
 
 }
