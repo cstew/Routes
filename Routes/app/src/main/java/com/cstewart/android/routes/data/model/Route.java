@@ -15,4 +15,8 @@ public class Route {
     public Polyline getPolyline() {
         return mPolyline;
     }
+
+    public List<Leg> getLegs() {
+        return mLegs;
+    }
 }

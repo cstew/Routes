@@ -1,6 +1,8 @@
 package com.cstewart.android.routes.data;
 
+import com.cstewart.android.routes.data.model.Leg;
 import com.cstewart.android.routes.data.model.Route;
+import com.cstewart.android.routes.data.model.RouteOverview;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public class DirectionsManager {
         mDirectionsService = directionsService;
     }
 
-    public Observable<List<LatLng>> getDirections(List<LatLng> points) {
+    public Observable<RouteOverview> getDirections(List<LatLng> points) {
 
         int lastPosition = points.size() - 1;
         String origin = getConvertedLatLng(points.get(0));
@@ -32,7 +34,13 @@ public class DirectionsManager {
                 .filter(routeContainer -> routeContainer.isValid())
                 .map(routeContainer -> {
                     Route route = routeContainer.getRoutes().get(0);
-                    return route.getPolyline().getDecodedPolyline();
+                    Leg leg = route.getLegs().get(0);
+
+                    RouteOverview routeOverview = new RouteOverview();
+                    routeOverview.setPoints(route.getPolyline().getDecodedPolyline());
+                    routeOverview.setDistance(leg.getDistance());
+
+                    return routeOverview;
                 });
     }
 

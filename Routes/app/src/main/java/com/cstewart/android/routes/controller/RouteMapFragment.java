@@ -2,6 +2,8 @@ package com.cstewart.android.routes.controller;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.RouteApplication;
 import com.cstewart.android.routes.data.DirectionsManager;
+import com.cstewart.android.routes.data.model.Distance;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -99,6 +102,7 @@ public class RouteMapFragment extends SupportMapFragment {
 
             case R.id.fragment_map_clear:
                 clearMap();
+                getActivity().invalidateOptionsMenu();
                 return true;
         }
 
@@ -131,6 +135,7 @@ public class RouteMapFragment extends SupportMapFragment {
     private void clearMap() {
         mMapPoints.clear();
         mMap.clear();
+        updateDistance(null);
     }
 
     private void undoPoint() {
@@ -159,16 +164,30 @@ public class RouteMapFragment extends SupportMapFragment {
 
     private void requestRoute() {
         if (mMapPoints.size() <= 1) {
+            updateDistance(null);
             return;
         }
         AppObservable.bindFragment(RouteMapFragment.this, mDirectionsManager.getDirections(mMapPoints))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(latLngs -> drawPoints(latLngs),
+                .subscribe(routeOverview -> {
+                            updateDistance(routeOverview.getDistance());
+                            drawPoints(routeOverview.getPoints());
+                        },
                         throwable -> {
                             Log.e(TAG, "Unable to get directions", throwable);
                             Toast.makeText(getActivity(), "Unable to get directions.", Toast.LENGTH_SHORT).show();
                         });
+    }
+
+    private void updateDistance(Distance distance) {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+        if (distance == null) {
+            actionBar.setSubtitle(null);
+        } else {
+            actionBar.setSubtitle(distance.getText());
+        }
     }
 
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
