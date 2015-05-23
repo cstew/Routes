@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.RouteApplication;
@@ -28,9 +29,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class RouteMapFragment extends SupportMapFragment {
     private static final String TAG = RouteMapFragment.class.getSimpleName();
@@ -164,19 +165,17 @@ public class RouteMapFragment extends SupportMapFragment {
                     .draggable(true)
                     .flat(true));
 
-            if (mMapPoints.size() > 1) {
-                mDirectionsManager.getDirections(mMapPoints, new Callback<List<LatLng>>() {
-                    @Override
-                    public void success(List<LatLng> latLngList, Response response) {
-                        drawPoints(latLngList);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(TAG, "Unable to get directions", error);
-                    }
-                });
+            if (mMapPoints.size() <= 1) {
+                return;
             }
+            AppObservable.bindFragment(RouteMapFragment.this, mDirectionsManager.getDirections(mMapPoints))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(latLngs -> drawPoints(latLngs),
+                            throwable -> {
+                                Log.e(TAG, "Unable to get directions", throwable);
+                                Toast.makeText(getActivity(), "Unable to get directions.", Toast.LENGTH_SHORT).show();
+                            });
         }
     };
 
