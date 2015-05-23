@@ -3,7 +3,11 @@ package com.cstewart.android.routes.controller;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.RouteApplication;
 import com.cstewart.android.routes.data.DirectionsManager;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,6 +52,7 @@ public class RouteMapFragment extends SupportMapFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         RouteApplication.get(getActivity()).getRouteGraph().inject(this);
 
@@ -71,6 +76,25 @@ public class RouteMapFragment extends SupportMapFragment {
         mGoogleApiClient.disconnect();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_map, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.fragment_map_clear:
+                clearMap();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void findLocation() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -92,6 +116,11 @@ public class RouteMapFragment extends SupportMapFragment {
     private void drawPoints(List<LatLng> latLngList) {
         mMap.addPolyline(new PolylineOptions()
                 .addAll(latLngList));
+    }
+
+    private void clearMap() {
+        mMapPoints.clear();
+        mMap.clear();
     }
 
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
