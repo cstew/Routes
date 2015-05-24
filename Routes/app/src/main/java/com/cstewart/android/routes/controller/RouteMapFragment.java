@@ -222,15 +222,12 @@ public class RouteMapFragment extends SupportMapFragment {
         }
     };
 
-    private GoogleMap.OnMapLongClickListener mOnMapLongClickListener = new GoogleMap.OnMapLongClickListener() {
-        @Override
-        public void onMapLongClick(LatLng latLng) {
-            mMapPoints.add(latLng);
-            drawPoint(latLng);
+    private GoogleMap.OnMapLongClickListener mOnMapLongClickListener = latLng -> {
+        mMapPoints.add(latLng);
+        drawPoint(latLng);
 
-            requestRoute();
-            getActivity().invalidateOptionsMenu();
-        }
+        requestRoute();
+        getActivity().invalidateOptionsMenu();
     };
 
 }

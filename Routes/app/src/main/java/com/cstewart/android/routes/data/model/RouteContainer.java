@@ -6,6 +6,8 @@ import java.util.List;
 
 public class RouteContainer {
 
+    private static final String STATUS_MAX_WAYPOINTS = "MAX_WAYPOINTS_EXCEEDED";
+
     @SerializedName("status")
     private String mStatus;
 
@@ -22,5 +24,9 @@ public class RouteContainer {
 
     public boolean isValid() {
         return mRoutes != null && mRoutes.size() > 0;
+    }
+
+    public boolean isMaxWaypointError() {
+        return STATUS_MAX_WAYPOINTS.equals(mStatus);
     }
 }
