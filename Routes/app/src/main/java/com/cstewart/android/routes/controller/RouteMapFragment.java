@@ -57,6 +57,7 @@ public class RouteMapFragment extends SupportMapFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
 
         RouteApplication.get(getActivity()).getRouteGraph().inject(this);
 
