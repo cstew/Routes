@@ -1,5 +1,7 @@
 package com.cstewart.android.routes.controller;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,16 +16,21 @@ import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.RouteApplication;
 import com.cstewart.android.routes.data.DirectionsManager;
 import com.cstewart.android.routes.data.model.Distance;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -40,6 +47,8 @@ public class RouteMapFragment extends SupportMapFragment {
     private static final String TAG = RouteMapFragment.class.getSimpleName();
 
     private static final int DEFAULT_ZOOM_LEVEL = 16;
+
+    private static final int REQUEST_PLACE_PICKER = 1;
 
     @Inject DirectionsManager mDirectionsManager;
 
@@ -96,6 +105,10 @@ public class RouteMapFragment extends SupportMapFragment {
 
         switch (item.getItemId()) {
 
+            case R.id.fragment_map_search:
+                startPlacePicker();
+                return true;
+
             case R.id.fragment_map_undo:
                 undoPoint();
                 getActivity().invalidateOptionsMenu();
@@ -108,6 +121,45 @@ public class RouteMapFragment extends SupportMapFragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            case REQUEST_PLACE_PICKER:
+                if (resultCode == Activity.RESULT_OK) {
+
+                    if (data == null) {
+                        Log.i(TAG, "Place picked but data is null");
+                        handlePlacePickerError();
+                        return;
+                    }
+
+                    Place place = PlacePicker.getPlace(data, getActivity());
+                    if (place == null) {
+                        Log.i(TAG, "Place picked but place not found");
+                        handlePlacePickerError();
+                        return;
+                    }
+
+                    clearMap();
+                    LatLng placeLocation = place.getLatLng();
+                    addPoint(placeLocation);
+                    zoomToLatLng(place.getLatLng());
+
+                } else {
+                    Log.i(TAG, "Received an error result from places picker. Result code: " + resultCode);
+                    handlePlacePickerError();
+                }
+
+                return;
+
+        }
+    }
+
+    private void handlePlacePickerError() {
+        Toast.makeText(getActivity(), R.string.search_fail, Toast.LENGTH_SHORT).show();
     }
 
     private void findLocation() {
@@ -124,7 +176,11 @@ public class RouteMapFragment extends SupportMapFragment {
         }
 
         LatLng currentLatLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLatLng, DEFAULT_ZOOM_LEVEL);
+        zoomToLatLng(currentLatLng);
+    }
+
+    private void zoomToLatLng(LatLng latLng) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM_LEVEL);
         mMap.animateCamera(cameraUpdate);
     }
 
@@ -191,6 +247,36 @@ public class RouteMapFragment extends SupportMapFragment {
         }
     }
 
+    private void startPlacePicker() {
+        Intent intent = null;
+        LatLngBounds bounds = new LatLngBounds.Builder()
+                .include(new LatLng(mLocation.getLatitude(), mLocation.getLongitude()))
+                .build();
+        try {
+            intent = new PlacePicker.IntentBuilder()
+                    .setLatLngBounds(bounds)
+                    .build(getActivity());
+        } catch (GooglePlayServicesRepairableException e) {
+            Log.e(TAG, "Unable to create places picker", e);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, "Unable to create places picker", e);
+        }
+
+        if (intent == null) {
+            return;
+        }
+
+        startActivityForResult(intent, REQUEST_PLACE_PICKER);
+    }
+
+    private void addPoint(LatLng latLng) {
+        mMapPoints.add(latLng);
+        drawPoint(latLng);
+
+        requestRoute();
+        getActivity().invalidateOptionsMenu();
+    }
+
     private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
@@ -224,11 +310,7 @@ public class RouteMapFragment extends SupportMapFragment {
     };
 
     private GoogleMap.OnMapLongClickListener mOnMapLongClickListener = latLng -> {
-        mMapPoints.add(latLng);
-        drawPoint(latLng);
-
-        requestRoute();
-        getActivity().invalidateOptionsMenu();
+        addPoint(latLng);
     };
 
 }

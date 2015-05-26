@@ -2,5 +2,7 @@
     <string name="app_name">Routes</string>
     <string name="undo">Undo</string>
     <string name="clear">Clear</string>
+    <string name="search">Search</string>
+    <string name="search_fail">Sorry. Not able to search right now</string>
 
 </resources>
