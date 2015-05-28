@@ -31,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -55,6 +56,7 @@ public class RouteMapFragment extends SupportMapFragment {
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+    private int mMarkerDragIndex = -1;
 
     private List<LatLng> mMapPoints = new ArrayList<>();
 
@@ -302,6 +304,7 @@ public class RouteMapFragment extends SupportMapFragment {
         public void onMapReady(GoogleMap map) {
             mMap = map;
             mMap.setOnMapLongClickListener(mOnMapLongClickListener);
+            mMap.setOnMarkerDragListener(mOnMarkerDragListener);
             map.setMyLocationEnabled(true);
             map.setBuildingsEnabled(true);
 
@@ -311,6 +314,33 @@ public class RouteMapFragment extends SupportMapFragment {
 
     private GoogleMap.OnMapLongClickListener mOnMapLongClickListener = latLng -> {
         addPoint(latLng);
+    };
+
+    private GoogleMap.OnMarkerDragListener mOnMarkerDragListener = new GoogleMap.OnMarkerDragListener() {
+
+        @Override
+        public void onMarkerDragStart(Marker marker) {
+            LatLng update = marker.getPosition();
+            mMarkerDragIndex = mMapPoints.indexOf(update);
+            Log.i(TAG, "Marker index: " + mMarkerDragIndex);
+        }
+
+        @Override
+        public void onMarkerDrag(Marker marker) {
+
+        }
+
+        @Override
+        public void onMarkerDragEnd(Marker marker) {
+            if (mMarkerDragIndex < 0) {
+                return;
+            }
+
+            mMapPoints.set(mMarkerDragIndex, marker.getPosition());
+            mMap.clear();
+            drawAllPoints();
+            requestRoute();
+        }
     };
 
 }
