@@ -6,7 +6,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +42,7 @@ import javax.inject.Inject;
 import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class RouteMapFragment extends SupportMapFragment {
     private static final String TAG = RouteMapFragment.class.getSimpleName();
@@ -133,14 +133,14 @@ public class RouteMapFragment extends SupportMapFragment {
                 if (resultCode == Activity.RESULT_OK) {
 
                     if (data == null) {
-                        Log.i(TAG, "Place picked but data is null");
+                        Timber.i("Place picked but data is null");
                         handlePlacePickerError();
                         return;
                     }
 
                     Place place = PlacePicker.getPlace(data, getActivity());
                     if (place == null) {
-                        Log.i(TAG, "Place picked but place not found");
+                        Timber.i("Place picked but place not found");
                         handlePlacePickerError();
                         return;
                     }
@@ -151,7 +151,7 @@ public class RouteMapFragment extends SupportMapFragment {
                     zoomToLatLng(place.getLatLng());
 
                 } else {
-                    Log.i(TAG, "Received an error result from places picker. Result code: " + resultCode);
+                    Timber.i("Received an error result from places picker. Result code: " + resultCode);
                     handlePlacePickerError();
                 }
 
@@ -234,8 +234,8 @@ public class RouteMapFragment extends SupportMapFragment {
                             drawPoints(routeOverview.getPoints());
                         },
                         throwable -> {
-                            Log.e(TAG, "Unable to get directions", throwable);
-                            Toast.makeText(getActivity(), "Unable to get directions.", Toast.LENGTH_SHORT).show();
+                            Timber.e("Unable to get directions", throwable);
+                            Toast.makeText(getActivity(), R.string.locations_error, Toast.LENGTH_SHORT).show();
                         });
     }
 
@@ -259,9 +259,9 @@ public class RouteMapFragment extends SupportMapFragment {
                     .setLatLngBounds(bounds)
                     .build(getActivity());
         } catch (GooglePlayServicesRepairableException e) {
-            Log.e(TAG, "Unable to create places picker", e);
+            Timber.e("Unable to create places picker", e);
         } catch (GooglePlayServicesNotAvailableException e) {
-            Log.e(TAG, "Unable to create places picker", e);
+            Timber.e("Unable to create places picker", e);
         }
 
         if (intent == null) {
@@ -322,7 +322,7 @@ public class RouteMapFragment extends SupportMapFragment {
         public void onMarkerDragStart(Marker marker) {
             LatLng update = marker.getPosition();
             mMarkerDragIndex = mMapPoints.indexOf(update);
-            Log.i(TAG, "Marker index: " + mMarkerDragIndex);
+            Timber.i("Marker index: " + mMarkerDragIndex);
         }
 
         @Override

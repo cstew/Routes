@@ -4,5 +4,6 @@
     <string name="clear">Clear</string>
     <string name="search">Search</string>
     <string name="search_fail">Sorry. Not able to search right now</string>
+    <string name="locations_error">Unable to get directions.</string>
 
 </resources>
