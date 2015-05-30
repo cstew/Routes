@@ -45,7 +45,6 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class RouteMapFragment extends SupportMapFragment {
-    private static final String TAG = RouteMapFragment.class.getSimpleName();
 
     private static final int DEFAULT_ZOOM_LEVEL = 16;
 
