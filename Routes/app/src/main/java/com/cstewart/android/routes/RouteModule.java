@@ -31,7 +31,7 @@ public class RouteModule {
         return new RestAdapter.Builder()
                 .setEndpoint("https://maps.googleapis.com/maps/api")
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setLog(message -> Timber.d("Retrofit", message))
+                .setLog(message -> Timber.d(message))
                 .setRequestInterceptor(request -> request.addQueryParam("key", BuildConfig.DIRECTIONS_API_KEY))
                 .build();
     }
