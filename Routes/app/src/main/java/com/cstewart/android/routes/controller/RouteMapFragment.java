@@ -186,6 +186,25 @@ public class RouteMapFragment extends SupportMapFragment {
     }
 
     private void drawPoints(List<LatLng> latLngList) {
+
+        float distance = 0f;
+        if (latLngList.size() > 1) {
+            for (int i = 1; i < latLngList.size(); i++) {
+                LatLng previous = latLngList.get(i - 1);
+                LatLng current = latLngList.get(i);
+
+                float[] results = new float[1];
+                Location.distanceBetween(
+                        previous.latitude,
+                        previous.longitude,
+                        current.latitude,
+                        current.longitude,
+                        results);
+                distance += results[0];
+            }
+        }
+        Timber.i("Distance: %f meters", distance);
+
         mMap.addPolyline(new PolylineOptions()
                 .addAll(latLngList));
     }
