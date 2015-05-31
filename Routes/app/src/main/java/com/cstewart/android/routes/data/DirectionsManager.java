@@ -3,6 +3,7 @@ package com.cstewart.android.routes.data;
 import com.cstewart.android.routes.data.model.Leg;
 import com.cstewart.android.routes.data.model.Route;
 import com.cstewart.android.routes.data.model.RouteOverview;
+import com.cstewart.android.routes.data.model.TravelMode;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
@@ -10,8 +11,6 @@ import java.util.List;
 import rx.Observable;
 
 public class DirectionsManager {
-
-    private static final String MODE_WALKING = "walking";
 
     private DirectionsService mDirectionsService;
 
@@ -30,7 +29,7 @@ public class DirectionsManager {
         }
 
         return mDirectionsService
-                .getDirections(origin, destination, waypoints, MODE_WALKING)
+                .getDirections(origin, destination, waypoints, TravelMode.WALKING.getServerName())
                 .filter(routeContainer -> routeContainer.isValid())
                 .map(routeContainer -> {
                     Route route = routeContainer.getRoutes().get(0);
