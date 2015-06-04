@@ -11,3 +11,8 @@ ROUTES_MAPS_API_KEY = YOUR_API_KEY
 ```
 ROUTES_DIRECTIONS_API_KEY = YOUR_API_KEY
 ```
+
+- Set up your Crashlytics/fabric API key in `~/.gradle/gradle.properties`:
+```
+ROUTES_FABRIC_API_KEY = YOUR_API_KEY
+```
