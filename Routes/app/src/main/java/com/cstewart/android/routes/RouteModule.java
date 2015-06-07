@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.cstewart.android.routes.data.DirectionsManager;
 import com.cstewart.android.routes.data.DirectionsService;
+import com.cstewart.android.routes.data.Preferences;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,6 +18,10 @@ public class RouteModule {
 
     public RouteModule(Context context) {
         mContext = context;
+    }
+
+    @Provides Preferences providePreferences(Context context) {
+        return new Preferences(context);
     }
 
     @Provides DirectionsManager provideDirectionsManager(DirectionsService directionsService) {
