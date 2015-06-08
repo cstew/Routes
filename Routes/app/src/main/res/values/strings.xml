@@ -6,4 +6,9 @@
     <string name="search_fail">Sorry. Not able to search right now</string>
     <string name="locations_error">Unable to get directions.</string>
     <string name="title_activity_splash">SplashActivity</string>
+
+    <string name="ftue_item_long_press">Long press on the map to create a point</string>
+    <string name="ftue_item_points_connect">Points connect in order to create your route</string>
+    <string name="ftue_item_undo">Use the undo button if you make a mistake</string>
+    <string name="next">Next</string>
 </resources>
