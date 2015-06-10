@@ -235,7 +235,7 @@ public class RouteMapFragment extends SupportMapFragment {
     private void drawPoint(LatLng latLng) {
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .draggable(true)
+                .draggable(false)
                 .flat(true));
     }
 
