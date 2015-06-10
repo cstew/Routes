@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cstewart.android.routes.R;
@@ -12,6 +13,7 @@ import com.cstewart.android.routes.controller.FtueActivity;
 public class FtueView extends FrameLayout {
 
     private TextView mMessageTextView;
+    private ImageView mImageView;
 
     private FtueActivity.FtueItem mFtueItem;
 
@@ -27,6 +29,7 @@ public class FtueView extends FrameLayout {
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_ftue, this);
+        mImageView = (ImageView) findViewById(R.id.view_ftue_image);
         mMessageTextView = (TextView) findViewById(R.id.view_ftue_message);
     }
 
@@ -38,6 +41,7 @@ public class FtueView extends FrameLayout {
         }
 
         mMessageTextView.setText(mFtueItem.getMessageResId());
+        mImageView.setImageResource(mFtueItem.getImageResId());
     }
 
     public void setFtueItem(FtueActivity.FtueItem ftueItem) {

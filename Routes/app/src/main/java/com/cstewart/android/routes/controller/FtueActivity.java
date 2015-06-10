@@ -3,6 +3,8 @@ package com.cstewart.android.routes.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,9 +33,9 @@ public class FtueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ftue);
 
         List<FtueItem> ftueItems = new ArrayList<>();
-        ftueItems.add(new FtueItem(R.string.ftue_item_long_press));
-        ftueItems.add(new FtueItem(R.string.ftue_item_points_connect));
-        ftueItems.add(new FtueItem(R.string.ftue_item_undo));
+        ftueItems.add(new FtueItem(R.string.ftue_item_long_press, R.drawable.ftue_point));
+        ftueItems.add(new FtueItem(R.string.ftue_item_points_connect, R.drawable.ftue_line));
+        ftueItems.add(new FtueItem(R.string.ftue_item_undo, R.drawable.ic_action_undo));
 
         mNextButton = (Button) findViewById(R.id.activity_ftue_next);
         mNextButton.setOnClickListener(mOnNextClick);
@@ -86,21 +88,29 @@ public class FtueActivity extends AppCompatActivity {
     public static class FtueItem {
 
         private int mMessageResId;
+        private int mImageResId;
 
         public FtueItem(int messageResId) {
+            this(messageResId, 0);
+        }
+
+        public FtueItem(@StringRes int messageResId, @DrawableRes int imageResId) {
             mMessageResId = messageResId;
+            mImageResId = imageResId;
         }
 
         public int getMessageResId() {
             return mMessageResId;
+        }
+
+        public int getImageResId() {
+            return mImageResId;
         }
     }
 
     private View.OnClickListener mOnNextClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int max = mViewPager.getAdapter().getCount();
-
             if (isLastPage(mViewPager.getCurrentItem())) {
                 finish();
             } else {

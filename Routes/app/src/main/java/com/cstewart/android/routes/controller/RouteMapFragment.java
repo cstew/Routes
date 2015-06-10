@@ -260,11 +260,8 @@ public class RouteMapFragment extends SupportMapFragment {
     private void updateDistance(Distance distance) {
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-        if (distance == null) {
-            actionBar.setSubtitle(null);
-        } else {
-            actionBar.setSubtitle(distance.getText());
-        }
+        String subtitle = (distance == null)? null : distance.getText();
+        actionBar.setSubtitle(subtitle);
     }
 
     private void startPlacePicker() {
