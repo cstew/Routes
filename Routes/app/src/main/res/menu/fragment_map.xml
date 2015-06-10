@@ -18,4 +18,9 @@
         android:id="@+id/fragment_map_clear"
         android:title="@string/clear"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/fragment_map_help"
+        android:title="@string/help"
+        app:showAsAction="never"/>
 </menu>

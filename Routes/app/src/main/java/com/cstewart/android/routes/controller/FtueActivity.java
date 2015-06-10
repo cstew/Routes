@@ -13,12 +13,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.cstewart.android.routes.R;
+import com.cstewart.android.routes.RouteApplication;
+import com.cstewart.android.routes.data.Preferences;
 import com.cstewart.android.routes.view.FtueView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class FtueActivity extends AppCompatActivity {
+
+    @Inject Preferences mPreferences;
 
     private Button mNextButton;
     private ViewPager mViewPager;
@@ -30,6 +36,7 @@ public class FtueActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RouteApplication.get(this).getRouteGraph().inject(this);
         setContentView(R.layout.activity_ftue);
 
         List<FtueItem> ftueItems = new ArrayList<>();
@@ -43,6 +50,8 @@ public class FtueActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.activity_ftue_viewpager);
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         mViewPager.setAdapter(new FtueAdapter(this, ftueItems));
+
+        mPreferences.setHasCompletedFtue(true);
     }
 
     private boolean isLastPage(int position) {

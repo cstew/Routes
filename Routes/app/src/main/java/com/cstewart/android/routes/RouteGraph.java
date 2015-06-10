@@ -1,5 +1,6 @@
 package com.cstewart.android.routes;
 
+import com.cstewart.android.routes.controller.FtueActivity;
 import com.cstewart.android.routes.controller.RouteMapFragment;
 import com.cstewart.android.routes.controller.SplashActivity;
 import com.cstewart.android.routes.data.DirectionsManager;
@@ -15,4 +16,5 @@ public interface RouteGraph {
 
     public void inject(RouteMapFragment routeMapFragment);
     public void inject(SplashActivity splashActivity);
+    public void inject(FtueActivity ftueActivity);
 }

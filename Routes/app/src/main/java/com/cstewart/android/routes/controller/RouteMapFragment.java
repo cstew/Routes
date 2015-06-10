@@ -119,6 +119,10 @@ public class RouteMapFragment extends SupportMapFragment {
                 clearMap();
                 getActivity().invalidateOptionsMenu();
                 return true;
+
+            case R.id.fragment_map_help:
+                startActivity(FtueActivity.newIntent(getActivity()));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
