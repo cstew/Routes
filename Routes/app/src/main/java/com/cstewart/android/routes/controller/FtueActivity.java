@@ -39,7 +39,13 @@ public class FtueActivity extends AppCompatActivity {
         mNextButton.setOnClickListener(mOnNextClick);
 
         mViewPager = (ViewPager) findViewById(R.id.activity_ftue_viewpager);
+        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         mViewPager.setAdapter(new FtueAdapter(this, ftueItems));
+    }
+
+    private boolean isLastPage(int position) {
+        int max = mViewPager.getAdapter().getCount();
+        return (position + 1) >= max;
     }
 
     private class FtueAdapter extends PagerAdapter {
@@ -95,12 +101,25 @@ public class FtueActivity extends AppCompatActivity {
         public void onClick(View view) {
             int max = mViewPager.getAdapter().getCount();
 
-            if (mViewPager.getCurrentItem() + 1 >= max) {
+            if (isLastPage(mViewPager.getCurrentItem())) {
                 finish();
             } else {
                 mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
             }
         }
+    };
+
+    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+
+        @Override
+        public void onPageSelected(int position) {
+            if (isLastPage(position)) {
+                mNextButton.setText(R.string.done);
+            } else {
+                mNextButton.setText(R.string.next);
+            }
+        }
+
     };
 
 }

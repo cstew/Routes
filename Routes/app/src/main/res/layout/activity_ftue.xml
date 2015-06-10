@@ -12,6 +12,7 @@
     <Button
         android:id="@+id/activity_ftue_next"
         style="?borderlessButtonStyle"
+        android:background="@color/accent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
