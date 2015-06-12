@@ -22,12 +22,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 public class FtueActivity extends AppCompatActivity {
 
     @Inject Preferences mPreferences;
 
-    private Button mNextButton;
-    private ViewPager mViewPager;
+    @InjectView(R.id.activity_ftue_viewpager)
+    ViewPager mViewPager;
+
+    @InjectView(R.id.activity_ftue_next)
+    Button mNextButton;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, FtueActivity.class);
@@ -38,16 +45,13 @@ public class FtueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         RouteApplication.get(this).getRouteGraph().inject(this);
         setContentView(R.layout.activity_ftue);
+        ButterKnife.inject(this);
 
         List<FtueItem> ftueItems = new ArrayList<>();
         ftueItems.add(new FtueItem(R.string.ftue_item_long_press, R.drawable.ftue_point));
         ftueItems.add(new FtueItem(R.string.ftue_item_points_connect, R.drawable.ftue_line));
         ftueItems.add(new FtueItem(R.string.ftue_item_undo, R.drawable.ic_action_undo));
 
-        mNextButton = (Button) findViewById(R.id.activity_ftue_next);
-        mNextButton.setOnClickListener(mOnNextClick);
-
-        mViewPager = (ViewPager) findViewById(R.id.activity_ftue_viewpager);
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
         mViewPager.setAdapter(new FtueAdapter(this, ftueItems));
 
@@ -57,6 +61,15 @@ public class FtueActivity extends AppCompatActivity {
     private boolean isLastPage(int position) {
         int max = mViewPager.getAdapter().getCount();
         return (position + 1) >= max;
+    }
+
+    @OnClick(R.id.activity_ftue_next)
+    public void onNext() {
+        if (isLastPage(mViewPager.getCurrentItem())) {
+            finish();
+        } else {
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
+        }
     }
 
     private class FtueAdapter extends PagerAdapter {

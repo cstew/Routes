@@ -10,10 +10,16 @@ import android.widget.TextView;
 import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.controller.FtueActivity;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class FtueView extends FrameLayout {
 
-    private TextView mMessageTextView;
-    private ImageView mImageView;
+    @InjectView(R.id.view_ftue_message)
+    TextView mMessageTextView;
+
+    @InjectView(R.id.view_ftue_image)
+    ImageView mImageView;
 
     private FtueActivity.FtueItem mFtueItem;
 
@@ -29,8 +35,7 @@ public class FtueView extends FrameLayout {
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_ftue, this);
-        mImageView = (ImageView) findViewById(R.id.view_ftue_image);
-        mMessageTextView = (TextView) findViewById(R.id.view_ftue_message);
+        ButterKnife.inject(this);
     }
 
     private void updateUI() {
