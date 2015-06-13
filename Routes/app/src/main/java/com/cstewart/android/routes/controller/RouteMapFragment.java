@@ -153,7 +153,7 @@ public class RouteMapFragment extends SupportMapFragment {
                     addPoint(placeLocation);
                     zoomToLatLng(place.getLatLng());
 
-                } else {
+                } else if (resultCode == PlacePicker.RESULT_ERROR) {
                     Timber.i("Received an error result from places picker. Result code: " + resultCode);
                     handlePlacePickerError();
                 }
