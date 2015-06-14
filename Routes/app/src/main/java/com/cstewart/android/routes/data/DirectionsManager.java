@@ -30,8 +30,12 @@ public class DirectionsManager {
 
         return mDirectionsService
                 .getDirections(origin, destination, waypoints, TravelMode.WALKING.getServerName())
-                .filter(routeContainer -> routeContainer.isValid())
                 .map(routeContainer -> {
+
+                    if (routeContainer.isMaxWaypointError()) {
+                        throw new MaxWaypointException();
+                    }
+
                     Route route = routeContainer.getRoutes().get(0);
                     Leg leg = route.getLegs().get(0);
 

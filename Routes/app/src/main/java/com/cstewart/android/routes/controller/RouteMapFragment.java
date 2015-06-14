@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.cstewart.android.routes.R;
 import com.cstewart.android.routes.RouteApplication;
 import com.cstewart.android.routes.data.DirectionsManager;
+import com.cstewart.android.routes.data.MaxWaypointException;
 import com.cstewart.android.routes.data.model.Distance;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -45,6 +46,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class RouteMapFragment extends SupportMapFragment {
+    private static final String TAG_MAX_WAYPOINT_DIALOG = "MaxWaypointDialog";
 
     private static final int DEFAULT_ZOOM_LEVEL = 16;
 
@@ -256,9 +258,20 @@ public class RouteMapFragment extends SupportMapFragment {
                             drawPoints(routeOverview.getPoints());
                         },
                         throwable -> {
-                            Timber.e("Unable to get directions", throwable);
+
+                            if (throwable instanceof MaxWaypointException) {
+                                handleMaxWaypointException();
+                                return;
+                            }
+
+                            Timber.e(throwable, "Unable to get directions");
                             Toast.makeText(getActivity(), R.string.locations_error, Toast.LENGTH_SHORT).show();
                         });
+    }
+
+    private void handleMaxWaypointException() {
+        MaxWaypointDialogFragment fragment = MaxWaypointDialogFragment.newInstance();
+        fragment.show(getFragmentManager(), TAG_MAX_WAYPOINT_DIALOG);
     }
 
     private void updateDistance(Distance distance) {
