@@ -272,6 +272,8 @@ public class RouteMapFragment extends SupportMapFragment {
     private void handleMaxWaypointException() {
         MaxWaypointDialogFragment fragment = MaxWaypointDialogFragment.newInstance();
         fragment.show(getFragmentManager(), TAG_MAX_WAYPOINT_DIALOG);
+
+        undoPoint();
     }
 
     private void updateDistance(Distance distance) {
