@@ -48,6 +48,7 @@ public class FtueActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         List<FtueItem> ftueItems = new ArrayList<>();
+        ftueItems.add(new FtueItem(R.string.ftue_item_routes, R.mipmap.ic_launcher));
         ftueItems.add(new FtueItem(R.string.ftue_item_long_press, R.drawable.ftue_point));
         ftueItems.add(new FtueItem(R.string.ftue_item_points_connect, R.drawable.ftue_line));
         ftueItems.add(new FtueItem(R.string.ftue_item_undo, R.drawable.ic_action_undo));

@@ -6,9 +6,11 @@
     <string name="search_fail">Sorry. Not able to search right now</string>
     <string name="locations_error">Unable to get directions.</string>
 
+    <string name="ftue_item_routes">Welcome to Routes\n\nPlan your running route</string>
     <string name="ftue_item_long_press">Points are created by holding down on the map</string>
     <string name="ftue_item_points_connect">Points connect to create your route</string>
     <string name="ftue_item_undo">Use the undo button if you make a mistake</string>
+
     <string name="next">Next</string>
     <string name="done">Got it</string>
     <string name="help">Help</string>
